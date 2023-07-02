@@ -1,0 +1,46 @@
+In this example we connect a PCF8563 breakout
+
+Code
+
+#include <Wire.h>
+#include <Rtc_Pcf8563.h>
+
+//init the real time clock
+Rtc_Pcf8563 rtc;
+
+void setup()
+{
+  //clear out the registers
+  rtc.initClock();
+  //set a time to start with.
+  //day, weekday, month, century(1=1900, 0=2000), year(0-99)
+  rtc.setDate(23, 1, 11, 0, 15);
+  //hr, min, sec
+  rtc.setTime(14, 04, 01);
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  //both format functions call the internal getTime() so that the 
+  //formatted strings are at the current time/date.
+  Serial.print(rtc.formatTime());
+  Serial.print(" : ");
+  Serial.print(rtc.formatDate());
+  Serial.println();
+  delay(1000);
+}
+
+Output
+
+14:04:09 : 11/23/2015
+14:04:10 : 11/23/2015
+14:04:11 : 11/23/2015
+14:04:12 : 11/23/2015
+14:04:13 : 11/23/2015
+14:04:14 : 11/23/2015
+14:04:15 : 11/23/2015
+
+
+
+Links

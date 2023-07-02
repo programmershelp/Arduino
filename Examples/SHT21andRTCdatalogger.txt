@@ -1,0 +1,103 @@
+In a previous example we logged sensor readings from the SHT21 to an SD card, as a slight improvement we will also log the time as well. Using the data logging shield we will implement the RTC functionality as well which will allow us to get the latest time.
+
+
+Code
+
+#include <Wire.h>
+#include <Sodaq_SHT2x.h>
+#include <SPI.h>
+#include <SD.h>
+#include "RTClib.h"
+
+RTC_DS1307 RTC;
+File myFile;
+const int chipSelect = 10;
+
+void setup()
+{
+  Wire.begin();
+  Serial.begin(9600);
+  RTC.begin();
+  //sd setup
+  if (!SD.begin(chipSelect)) 
+  {
+    Serial.println("initialization failed!");
+    return;
+  }
+  Serial.println("initialization complete.");
+  //RTC setup
+  if (! RTC.isrunning()) 
+  {
+    Serial.println("RTC is NOT running!");
+    // following line sets the RTC to the date & time this sketch was compiled
+    RTC.adjust(DateTime(__DATE__, __TIME__));
+  }
+}
+
+void loop()
+{
+  Serial.print("Humidity(%RH): ");
+  Serial.print(SHT2x.GetHumidity());
+  Serial.print("     Temperature(C): ");
+  Serial.println(SHT2x.GetTemperature());
+  DateTime now = RTC.now();
+  //create a file
+  File myFile = SD.open("sht21.txt", FILE_WRITE);
+  //write to file
+  if (myFile) 
+  {
+    Serial.print("Writing to sht21.txt...");
+    //date and time section
+    if(now.hour() <10)
+    {
+      myFile.print("0");
+    }
+    myFile.print(now.hour());
+    myFile.print(":");
+    
+    if(now.minute() < 10)
+    {
+      myFile.print("0");
+    }
+    myFile.print(now.minute());
+    myFile.print(":");
+    
+    if(now.second() < 10)
+    {
+       myFile.print("0");
+    }
+    myFile.print(now.second());
+    myFile.print(",");
+    //sensor section
+    myFile.print(SHT2x.GetHumidity());
+    myFile.print(",");
+    myFile.print(SHT2x.GetTemperature());
+    myFile.println();
+    //close the file
+    myFile.close();
+    Serial.println("done.");
+  } 
+  else 
+  {
+    Serial.println("error opening sht21.txt file");
+  }
+  delay(1000);
+}
+
+
+Output
+
+10:32:14,22.23,24.60
+10:32:16,22.21,24.61
+10:32:19,22.13,24.63
+10:32:21,22.10,24.62
+10:32:23,22.08,24.62
+10:32:24,22.08,24.60
+10:32:26,22.11,24.60
+10:32:27,22.11,24.58
+10:32:29,22.14,24.56
+10:32:30,22.17,24.55
+
+
+Links
+

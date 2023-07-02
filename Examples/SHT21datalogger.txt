@@ -1,0 +1,84 @@
+In this example we connect a SHT21 sensor to our Arduino and we will log the temperature and humidity readings to a file on the sd card.
+
+
+Arduino Uno
+SHT21 breakout
+Data logging shield
+Hookup wire
+
+
+
+Code
+
+#include <Wire.h>
+#include <Sodaq_SHT2x.h>
+#include <SPI.h>
+#include <SD.h>
+
+File myFile;
+const int chipSelect = 10;
+
+void setup()
+{
+  Wire.begin();
+  Serial.begin(9600);
+
+  if (!SD.begin(chipSelect)) 
+  {
+    Serial.println("initialization failed!");
+    return;
+  }
+  Serial.println("initialization complete.");
+ 
+}
+
+void loop()
+{
+  Serial.print("Humidity(%RH): ");
+  Serial.print(SHT2x.GetHumidity());
+  Serial.print("     Temperature(C): ");
+  Serial.println(SHT2x.GetTemperature());
+  //create a file
+  File myFile = SD.open("sht21.txt", FILE_WRITE);
+  //write to file
+  if (myFile) 
+  {
+    Serial.print("Writing to sht21.txt...");
+    myFile.print(SHT2x.GetHumidity());
+    myFile.print(",");
+    myFile.print(SHT2x.GetTemperature());
+    myFile.println();
+    //close the file
+    myFile.close();
+    Serial.println("done.");
+  } 
+  else 
+  {
+    Serial.println("error opening sht21.txt file");
+  }
+  delay(1000);
+}
+
+
+Output
+
+This is the output in the serial monitor window
+
+Writing to st21.txt...done.
+Humidity(%RH): 20.08     Temperature(C): 25.76
+Writing to st21.txt...done.
+Humidity(%RH): 20.13     Temperature(C): 25.78
+Writing to st21.txt...done.
+Humidity(%RH): 20.11     Temperature(C): 25.75
+Writing to st21.txt...done.
+Humidity(%RH): 20.12     Temperature(C): 25.72
+Writing to st21.txt...done.
+Humidity(%RH): 20.18     Temperature(C): 25.72
+Writing to st21.txt...done.
+
+
+This is the output from the text file
+
+
+
+Link

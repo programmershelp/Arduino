@@ -1,0 +1,80 @@
+
+
+You can use the file from the write to SD card example. I created a new file called newtest.txt and entered the following data
+
+
+new test example
+1,2,3,4,5,6
+Temp = 15c
+Temp = 16c
+Time = 09:39:20
+
+There are some key things to keep in mind
+
+You can have multiple files open at a time, and read from each one.
+Read() only returns one byte at a time.
+You should close() the file(s) when you're done
+
+The simple sketch below will open the file created earlier
+
+Code
+
+#include <SD.h>
+#include <SPI.h>
+
+File testFile;
+ 
+void setup()
+{
+  Serial.begin(9600);
+  Serial.print("Initializing SD card...");
+   pinMode(10, OUTPUT);
+ 
+  if (!SD.begin(10)) 
+  {
+    Serial.println("initialization failed!");
+    return;
+  }
+  Serial.println("initialization complete.");
+ 
+  // open the file
+  testFile = SD.open("newtest.txt");
+  if (testFile) 
+  {
+    Serial.println("newtest.txt:");
+ 
+    //read from the file
+    while (testFile.available()) 
+    {
+      Serial.write(testFile.read());
+    }
+    // close the file:
+    testFile.close();
+  } 
+  else 
+  {
+    Serial.println("error opening newtest.txt");
+  }
+}
+ 
+void loop()
+{
+
+}
+
+
+Result
+
+Open the serial monitor and you should see something like this
+
+
+Initializing SD card...initialization complete.
+newtest.txt:
+new test example
+1,2,3,4,5,6
+Temp = 15c
+Temp = 16c
+Time = 09:39:20
+
+
+Link

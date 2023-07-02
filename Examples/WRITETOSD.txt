@@ -1,0 +1,67 @@
+You can then open up the file in your operating system by inserting the card. You'll see one line for each time the sketch has run.
+
+Here are some general things to consider regarding writing to SD cards
+
+You can have multiple files open at a time, and you can also write to them as well. Just remember and close them all.
+You can use print and println() to write strings, variables for example. Its like outputting via Serial
+You must close() the file(s) when you're finished to make sure all the data is written to the file(s).
+You can open files in a directory. If you wanted to open a file in a directory such as /temp/latesttemp.txt you simply do the following SD.open("/temp/latesttemp.txt").
+
+The following sketch is a basic demo of writing to a file. This is a common scenario in datalogging.
+
+
+Code
+
+#include <SPI.h>
+#include <SD.h>
+
+ 
+File myFile;
+ 
+void setup()
+{
+  Serial.begin(9600);
+  Serial.print("Initializing SD card...");
+  pinMode(10, OUTPUT);
+ 
+  if (!SD.begin(10)) 
+  {
+    Serial.println("initialization failed!");
+    return;
+  }
+  Serial.println("initialization complete.");
+ 
+  //open the file.
+  myFile = SD.open("test.txt", FILE_WRITE);
+ 
+  //write to file
+  if (myFile) 
+  {
+    Serial.print("Writing to test.txt...");
+    myFile.println("TESTING : 1,2,3,4,5");
+    //close the file
+    myFile.close();
+    Serial.println("done.");
+  } 
+  else 
+  {
+    // if the file didn't open, print an error:
+    Serial.println("error opening test.txt file");
+  }
+}
+ 
+void loop()
+{
+
+}
+
+
+Result
+
+If you take the SD card to your PC and find the test.txt file you should see the file and if you open the file you will see something like the following. The amount of lines will vary on how many times the sketch has been run
+
+TESTING : 1,2,3,4,5
+TESTING : 1,2,3,4,5
+TESTING : 1,2,3,4,5
+
+Links

@@ -1,0 +1,50 @@
+Check if a File Exists
+
+// Check to see if the file exists: 
+ if (SD.exists("example.txt")) 
+ {
+    // example.txt exists
+ }
+ else 
+ {
+    // example.txt doesn't exist
+	
+ }
+ 
+ 
+Create a Text File on SD Card
+
+There isn’t a function for this purposes, but you can open a file with “FILE_WRITE” mode to create a file, if this file doesn’t exist.
+
+// To create a text file, we can open a new file and immediately close it:
+ dataFile = SD.open("example.txt", FILE_WRITE);
+ dataFile.close();
+ 
+ 
+ List All the files on SD card
+
+There isn’t a function for this in the library, but we can create a custom function to achieve this purpose. This function is from the example sketch in the Library. It prints the file directory to serial monitor.
+
+void printDirectory(File dir, int numTabs) {
+   while(true) {
+
+     File entry =  dir.openNextFile();
+     if (! entry) {
+       // no more files
+       break;
+     }
+     for (uint8_t i=0; i<numTabs; i++) {
+       Serial.print('t');
+     }
+     Serial.print(entry.name());
+     if (entry.isDirectory()) {
+       Serial.println("/");
+       printDirectory(entry, numTabs+1);
+     } else {
+       // files have sizes, directories do not
+       Serial.print("tt");
+       Serial.println(entry.size(), DEC);
+     }
+     entry.close();
+   }
+}
